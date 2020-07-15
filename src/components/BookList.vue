@@ -26,6 +26,15 @@ import BookForm from "./BookForm";
 
 export default {
   name: "BookList",
+  mounted() {
+    if (localStorage.getItem("books")) {
+      try {
+        this.books = JSON.parse(localStorage.getItem("books"));
+      } catch (e) {
+        localStorage.removeItem("books");
+      }
+    }
+  },
   data() {
     return {
       searchInput: "",
@@ -33,26 +42,7 @@ export default {
       filters: ["bought", "borrowed"],
       title: "All Books",
       states: ["Want to Read", "Read", "Reading"],
-      books: [
-        {
-          title: "Self-Reliance",
-          author: "Ralph Waldo Emerson",
-          finishedReading: true,
-          ownership: "borrowed"
-        },
-        {
-          title: "American Gods",
-          author: "Neil Gaiman",
-          finishedReading: false,
-          ownership: "bought"
-        },
-        {
-          title: "Amusing Ourselves to Death",
-          author: "Neil Postman",
-          finishedReading: true,
-          ownership: "borrowed"
-        }
-      ]
+      books: []
     };
   },
   components: {
@@ -78,6 +68,9 @@ export default {
         finishedReading: bookData.finishedReading,
         ownership: bookData.ownership
       });
+      // Resave books to local storage, since we just added a new one
+      const parsedBooks = JSON.stringify(this.books);
+      localStorage.setItem("books", parsedBooks);
     }
   }
 };
