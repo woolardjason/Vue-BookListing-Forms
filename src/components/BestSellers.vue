@@ -16,10 +16,13 @@
           Nonfiction
           <input v-model="selectedFilter" type="radio" id="nonfiction" value="nonfiction" />
         </label>
-        <select v-model="selectedBook">
+        <select v-model="selectedBook" @change="bookSelected(selectedBook)">
           <option v-for="book in filteredBooks" :key="book.id">{{ book.title }}</option>
         </select>
         <button type="submit" name="button">Add Book</button>
+        <br />
+        <br />
+        <img v-if="selectedBookImage != ''" :src="selectedBookImage"/>
       </form>
     </div>
     <div v-else><h1>Loading...</h1></div>
@@ -61,7 +64,8 @@ export default {
       selectedFilter: "all",
       filters: ["all", "fiction", "nonfiction"],
       books: [],
-      selectedBook: ""
+      selectedBook: "",
+      selectedBookImage: ""
     };
   },
 
@@ -123,17 +127,10 @@ export default {
         theDate.getFullYear() === today.getFullYear()
       );
     },
-    imageURLFromTitle(title) {
-      this.books.forEach(book => {
-        if (book.title == title) {
-          return book.book_image;
-        }
-      });
-    },
-    bookFromTitle(title) {
+    bookSelected(title) {
       this.books.forEach(book => {
         if (book.title === title) {
-          return book;
+          this.selectedBookImage = book.book_image;
         }
       });
     }
