@@ -5,6 +5,7 @@
     <ul>
       <book-item v-for="book in searchedBooks" :key="book.id" :book="book"></book-item>
     </ul>
+    <best-sellers @addBestseller="appendBestseller"></best-sellers>
     <hr />
     <h2>Filtered Books By Ownership</h2>
     <select v-model="holding">
@@ -23,6 +24,7 @@
 import _ from "lodash";
 import BookItem from "./BookItem";
 import BookForm from "./BookForm";
+import BestSellers from "./BestSellers";
 
 export default {
   name: "BookList",
@@ -30,7 +32,9 @@ export default {
     if (localStorage.getItem("books")) {
       try {
         this.books = JSON.parse(localStorage.getItem("books"));
+        console.log(this.books);
       } catch (e) {
+        console.log(e);
         localStorage.removeItem("books");
       }
     }
@@ -47,7 +51,8 @@ export default {
   },
   components: {
     BookItem,
-    BookForm
+    BookForm,
+    BestSellers
   },
   computed: {
     filteredBooks() {
@@ -67,6 +72,18 @@ export default {
         author: bookData.bookAuthor,
         finishedReading: bookData.finishedReading,
         ownership: bookData.ownership
+      });
+      // Resave books to local storage, since we just added a new one
+      const parsedBooks = JSON.stringify(this.books);
+      localStorage.setItem("books", parsedBooks);
+    },
+    appendBestseller(book) {
+      console.log(book);
+      this.books.push({
+        title: book.title,
+        author: book.author,
+        finishedReading: false,
+        ownership: "borrowed"
       });
       // Resave books to local storage, since we just added a new one
       const parsedBooks = JSON.stringify(this.books);
